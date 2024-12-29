@@ -10,13 +10,14 @@ return new class extends Migration {
    */
   public function up(): void
   {
-    Schema::create('users', function (Blueprint $table) {
+    Schema::create('movies', function (Blueprint $table) {
       $table->uuid('id')->primary();
-      $table->string('name');
-      $table->string('email')->unique();
-      $table->timestamp('email_verified_at')->nullable();
-      $table->string('password');
-      $table->foreignUuid('role_id')->constrained();
+      $table->string('title');
+      $table->text('synopsis');
+      $table->string('poster')->nullable();
+      $table->string('year');
+      $table->boolean('available');
+      $table->foreignUuid('genre_id')->constrained();
       $table->timestamps();
     });
   }
@@ -26,6 +27,6 @@ return new class extends Migration {
    */
   public function down(): void
   {
-    Schema::dropIfExists('users');
+    Schema::dropIfExists('movies');
   }
 };
