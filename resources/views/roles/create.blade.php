@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Lihat Genre</title>
+  <title>Tambah Peran</title>
   <!-- CSS files -->
   <link href="{{ asset('dist/css/tabler.min.css') }}" rel="stylesheet" />
 </head>
@@ -54,7 +54,7 @@
         <div class="navbar">
           <div class="container-xl">
             <ul class="navbar-nav">
-              <li class="nav-item">
+              <li class="nav-item active">
                 <a class="nav-link" href="/roles">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-check" width="24"
@@ -84,7 +84,7 @@
                   <span class="nav-link-title">Pengguna</span>
                 </a>
               </li>
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="/casts">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24"
@@ -154,12 +154,13 @@
       </div>
     </header>
     <div class="page-wrapper">
+
       <!-- Page header -->
       <div class="page-header d-print-none">
         <div class="container-xl">
           <div class="row g-2 align-items-center">
             <div class="col">
-              <h2 class="page-title text-primary">Lihat Genre</h2>
+              <h2 class="page-title text-primary">Tambah Peran</h2>
             </div>
           </div>
         </div>
@@ -170,21 +171,22 @@
         <div class="container-xl">
           <div class="card shadow-sm">
             <div class="card-body">
-              <!-- Display Genre Name -->
-              <div class="mb-3">
-                <label for="genre" class="form-label">Genre</label>
-                <input type="text" class="form-control" id="genre" name="genre" value="{{ old('genre', $genre->name) }}"
-                  readonly>
-              </div>
+              <form method="POST" action="/roles">
+                @csrf
 
-              <div class="text-center">
-                <a href="/genres" class="btn btn-secondary">Kembali</a>
-              </div>
+                <div class="mb-3">
+                  <label for="name" class="form-label">Nama</label>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama" required>
+                </div>
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
-
 
       <footer class="footer footer-light d-print-none">
         <div class="container-xl">
@@ -235,18 +237,20 @@
   <script src="{{ asset('dist/js/tabler.min.js') }}" defer></script>
   <script src="{{ asset('dist/js/demo.min.js') }}" defer></script>
   <script>
-    // JavaScript for showing the avatar preview
-    document.getElementById('avatar').addEventListener('change', function (event) {
-      const preview = document.getElementById('avatar-preview');
+    // Fungsi untuk preview image saat file dipilih
+    function previewImage(event) {
       const file = event.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const imagePreview = document.getElementById('poster-preview');
+        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid" style="max-width: 200px; height: auto;">`;
+      };
+
       if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          preview.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // Membaca file image dan mengonversinya menjadi URL data
       }
-    });
+    }
   </script>
 </body>
 

@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <title>Lihat Genre</title>
+  <title>Daftar Peran</title>
   <!-- CSS files -->
   <link href="{{ asset('dist/css/tabler.min.css') }}" rel="stylesheet" />
 </head>
@@ -54,7 +54,7 @@
         <div class="navbar">
           <div class="container-xl">
             <ul class="navbar-nav">
-              <li class="nav-item">
+              <li class="nav-item active">
                 <a class="nav-link" href="/roles">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-check" width="24"
@@ -84,7 +84,7 @@
                   <span class="nav-link-title">Pengguna</span>
                 </a>
               </li>
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="/casts">
                   <span class="nav-link-icon d-md-none d-lg-inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-users" width="24"
@@ -154,12 +154,51 @@
       </div>
     </header>
     <div class="page-wrapper">
+      @if(session('success'))
+      <div class="alert alert-success">
+      {{ session('success') }}
+      </div>
+    @endif
+
+      @if(session('error'))
+      <div class="alert alert-danger">
+      {{ session('error') }}
+      </div>
+    @endif
+
       <!-- Page header -->
       <div class="page-header d-print-none">
         <div class="container-xl">
           <div class="row g-2 align-items-center">
             <div class="col">
-              <h2 class="page-title text-primary">Lihat Genre</h2>
+              <h2 class="page-title text-primary">
+                Daftar Peran
+              </h2>
+            </div>
+            <!-- Page title actions -->
+            <div class="col-auto ms-auto d-print-none">
+              <div class="btn-list">
+                <a href="{{ route('roles.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                  <!-- Icon SVG -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                    stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 5l0 14" />
+                    <path d="M5 12l14 0" />
+                  </svg>
+                  Tambah Peran
+                </a>
+                <a href="{{ route('roles.create') }}" class="btn btn-primary d-sm-none btn-icon"
+                  aria-label="Create new role">
+                  <!-- Icon SVG -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                    stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 5l0 14" />
+                    <path d="M5 12l14 0" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -170,21 +209,50 @@
         <div class="container-xl">
           <div class="card shadow-sm">
             <div class="card-body">
-              <!-- Display Genre Name -->
-              <div class="mb-3">
-                <label for="genre" class="form-label">Genre</label>
-                <input type="text" class="form-control" id="genre" name="genre" value="{{ old('genre', $genre->name) }}"
-                  readonly>
-              </div>
-
-              <div class="text-center">
-                <a href="/genres" class="btn btn-secondary">Kembali</a>
+              <div id="table-default" class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>
+                        <button class="table-sort" data-sort="sort-nama">Nama</button>
+                      </th>
+                      <th>Aksi</th> <!-- Removed sorting for Aksi column -->
+                    </tr>
+                  </thead>
+                  <tbody class="table-tbody">
+                    @forelse ($roles as $role)
+            <!-- Fixed variable from 'roles' -->
+            <tr>
+              <td class="sort-nama">{{ $role->name }}</td>
+              <!-- Corrected 'movie' to 'role' and used role->name -->
+              <td class="sort-aksi">
+              <a href="{{ route('roles.show', $role->id) }}" class="btn btn-sm btn-info">Lihat</a>
+              <!-- Corrected route for roles -->
+              <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-warning">Ubah</a>
+              <!-- Corrected route for roles -->
+              <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display:inline;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger"
+                onclick="return confirm('Apakah Anda yakin ingin menghapus peran ini?')">Hapus
+                <!-- Corrected confirm message -->
+                </button>
+              </form>
+              </td>
+            </tr>
+          @empty
+      <tr>
+        <td colspan="2" class="text-center">Tidak ada data peran yang ditemukan.</td>
+        <!-- Fixed colspan -->
+      </tr>
+    @endforelse
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
       </div>
-
 
       <footer class="footer footer-light d-print-none">
         <div class="container-xl">
@@ -235,18 +303,53 @@
   <script src="{{ asset('dist/js/tabler.min.js') }}" defer></script>
   <script src="{{ asset('dist/js/demo.min.js') }}" defer></script>
   <script>
-    // JavaScript for showing the avatar preview
-    document.getElementById('avatar').addEventListener('change', function (event) {
-      const preview = document.getElementById('avatar-preview');
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          preview.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+      const table = document.querySelector('.table');
+      const headers = table.querySelectorAll('.table-sort');
+      const tbody = table.querySelector('.table-tbody');
+
+      headers.forEach(header => {
+        header.addEventListener('click', () => {
+          const sortKey = header.dataset.sort;
+          const rows = Array.from(tbody.querySelectorAll('tr'));
+
+          const isNumericColumn = header.dataset.numeric === "true";
+
+          rows.sort((a, b) => {
+            const cellA = a.querySelector(`.${sortKey}`).textContent.trim();
+            const cellB = b.querySelector(`.${sortKey}`).textContent.trim();
+
+            if (isNumericColumn) {
+              return parseFloat(cellA) - parseFloat(cellB);
+            } else {
+              return cellA.localeCompare(cellB);
+            }
+          });
+
+          // Reverse order if already sorted in ascending order
+          const isAscending = header.classList.contains('asc');
+          if (isAscending) {
+            rows.reverse();
+            header.classList.remove('asc');
+            header.classList.add('desc');
+          } else {
+            header.classList.remove('desc');
+            header.classList.add('asc');
+          }
+
+          // Clear other header sort indicators
+          headers.forEach(h => {
+            if (h !== header) {
+              h.classList.remove('asc', 'desc');
+            }
+          });
+
+          // Append sorted rows to the tbody
+          rows.forEach(row => tbody.appendChild(row));
+        });
+      });
     });
+
   </script>
 </body>
 

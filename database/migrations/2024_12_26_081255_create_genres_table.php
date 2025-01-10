@@ -5,21 +5,15 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-  /**
-   * Run the migrations.
-   */
   public function up(): void
   {
     Schema::create('genres', function (Blueprint $table) {
-      $table->uuid('id')->primary(); // Menetapkan UUID sebagai primary key
-      $table->string('name'); // Menambahkan field 'name'
+      $table->uuid('id')->primary();
+      $table->string('name');
       $table->timestamps();
     });
   }
 
-  /**
-   * Reverse the migrations.
-   */
   public function down(): void
   {
     Schema::dropIfExists('genres');
